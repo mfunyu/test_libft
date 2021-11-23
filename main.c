@@ -333,26 +333,53 @@ int main(int ac, char **av)
 }
 #endif
 
+static void	run_test(char *dst, char*src, int len, void* (*f)(void* , const void *, size_t))
+{
+	int		print_len = ft_strlen(dst);
+	print_len = (len > print_len ? len : print_len);
+
+	printf("src: %s\n", src);
+	f(dst, src, len);
+
+	printf("src: %s (after)\n", src);
+	write(1, "dst: ", 5);
+	write(1, dst, print_len);
+}
+
 #ifdef MEMMOVE
 //void	*memmove(void *dst, const void *src, size_t len);
 int	main(int ac, char **av)
 {
 	char	*dst = strdup(av[1]);
+	char	*dst2 = strdup(av[1]);
+
+	#ifdef OVERLAP1
+	printf("[ dst < src ]\n");
+	int		len = atoi(av[2]);
+	run_test(dst, dst + 2, len, ft_memmove);
+	printf(" (ft_memmove)\n");
+	run_test(dst2, dst2 + 2, len, memmove);
+	printf(" (memmove)\n");
+
+	#elif OVERLAP2
+	printf("[ dst > src ]\n");
+	int		len = atoi(av[2]);
+	run_test(dst + 3, dst, len, ft_memmove);
+	printf(" (ft_memmove)\n");
+	run_test(dst2 + 3, dst2, len, memmove);
+	printf(" (memmove)\n");
+
+	#else
 	char	*src = av[2];
 	int		len = atoi(av[3]);
-
-	ft_memmove(dst, src, len);
-
-	// output1
-	for (int i = 0; i < len; i++)
-		printf("%c", b[i]);
-	printf("\n");
-
-	//output2
-	printf("dst: %s\n", dst);
-	printf("src: %s\n", src);
+	run_test(dst, src, len, ft_memmove);
+	printf(" (ft_memmove)\n");
+	run_test(dst2, src, len, memmove);
+	printf(" (memmove)\n");
+	#endif
 
 	free(dst);
+	free(dst2);
 }
 #endif
 
@@ -379,19 +406,35 @@ int	main(int ac, char **av)
 int main(int ac, char **av)
 {
 	char	*dst = strdup(av[1]);
+	char	*dst2 = strdup(av[1]);
+
+	#ifdef OVERLAP1
+	printf("[ dst < src ]\n");
+	int		len = atoi(av[2]);
+	run_test(dst, dst + 2, len, ft_memcpy);
+	printf(" (ft_memcpy)\n");
+	run_test(dst2, dst2 + 2, len, memcpy);
+	printf(" (memcpy)\n");
+
+	#elif OVERLAP2
+	printf("[ dst > src ]\n");
+	int		len = atoi(av[2]);
+	run_test(dst + 3, dst, len, ft_memcpy);
+	printf(" (ft_memcpy)\n");
+	run_test(dst2 + 3, dst2, len, memcpy);
+	printf(" (memcpy)\n");
+
+	#else
 	char	*src = av[2];
 	int		len = atoi(av[3]);
-
-	printf("buf: %s src: %s len: %d\n", dst);
-
-	ft_memcpy(dst, src, len);
-
-	// output
-	for (int i = 0; i < len; i++)
-		printf("%c", dst[i]);
-	printf("\n");
+	run_test(dst, src, len, ft_memcpy);
+	printf(" (ft_memcpy)\n");
+	run_test(dst2, src, len, memcpy);
+	printf(" (memcpy)\n");
+	#endif
 
 	free(dst);
+	free(dst2);
 }
 #endif
 
