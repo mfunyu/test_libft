@@ -189,15 +189,58 @@ int	main(int ac, char **av)
 }
 #endif
 
+static void	print_ptr_content(char* ptr, size_t size)
+{
+	printf("*ptr: ");
+	for (size_t i = 0; i < size + 20; i++)
+		printf("%2d", ptr[i]);
+	printf("\n");
+}
+
+static void print_zero_cnt(char* ptr)
+{
+	int i = 0;
+	for (; !ptr[i]; i++) {}
+	printf("num_zeros: %d\n", i);
+}
+
 #ifdef CALLOC
 //void	*calloc(size_t count, size_t size);
 int	main(int ac, char **av)
 {
 	size_t	cnt = atol(av[1]);
 	size_t	size = atol(av[2]);
+	size_t	total = cnt * size;
+	printf("cnt: %zu, size: %zu, total: %zu\n\n", cnt, size, total);
 
-	printf("ret: %p\n", ft_calloc(cnt, size));
-	printf("cnt: %zu, size: %zu\n", cnt, size);
+	/* ft_calloc */
+	char* p = malloc(total);
+	memset(p, '*', 200);
+	print_ptr_content(p, total);
+	free(p);
+
+	char* ret_ptr = ft_calloc(cnt, size);
+	if (p != ret_ptr)
+		return 1;
+	print_ptr_content(ret_ptr, total);
+	print_zero_cnt(ret_ptr);
+	printf("ptr: %p (ft_calloc)\n", ret_ptr);
+	free(ret_ptr);
+
+	printf("----\n");
+	/* calloc */
+	p = malloc(total);
+	memset(p, '*', 200);
+	print_ptr_content(p, total);
+	free(p);
+
+	ret_ptr = calloc(cnt, size);
+	if (p != ret_ptr)
+		return 1;
+	print_ptr_content(ret_ptr, total);
+	print_zero_cnt(ret_ptr);
+	printf("ptr: %p (calloc)\n", ret_ptr);
+	free(ret_ptr);
 }
 #endif
 
