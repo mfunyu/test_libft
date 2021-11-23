@@ -326,7 +326,7 @@ int main(int ac, char **av)
 {
 	char	*s1 = av[1];
 	char	*s2 = av[2];
-	int		n = atoi(av[3])
+	int		n = atoi(av[3]);
 
 	printf("%d (ft_memcmp)\n", ft_memcmp(s1, s2, n));
 	printf("%d (memcmp)\n", memcmp(s1, s2, n));
